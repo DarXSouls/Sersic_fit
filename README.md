@@ -57,7 +57,7 @@ Galaxy_Sersic_Project/
 
 - Single sersic via `astropy.modeling.models.Sersic1D`
 - Double Sersic model for
-- - `bulge` (n_bulge > 2)
+  - `bulge` (n_bulge > 2)
   - `Disc` (n_disc ~ 1)
 
 ### 4. Curve Fitting
@@ -75,7 +75,7 @@ Galaxy_Sersic_Project/
 - Gadottu (2009) - Elliptical and pseudo-bulge structures
 
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 This project was carried out at the **School of Physics and Astronomy, Cardiff University**, under the guidance of **Dr. Matthew Smith**. Observational data was obtained from the **Las Cumbres Observatory**.
 
