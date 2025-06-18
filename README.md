@@ -1,157 +1,84 @@
-# Impact of Virial Ratios on Mass Segregation and Binary Formation in Young Stellar Clusters
+# A Face-On Perspective: Exploring Sersic Indices in Galaxies
 
-![Language](https://img.shields.io/badge/language-Fortran-blue.svg)
+![Language](https://img.shields.io/badge/language-Python-blue.svg)
 ![Status](https://img.shields.io/badge/status-Completed-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-## 🌌 Overview
+## 🌌 Project Overview
 
-This project investigates the influence of virial ratios on the **dynamical evolution**, **mass segregation**, and **binary formation** in small, young stellar clusters through N-body simulations. The simulations were conducted as part of a master's dissertation at Cardiff University.
+This project focuses on characterizing the morphology of three face-on galaxies—NGC3982, NGC2865, and NGC7773—using Sérsic index fitting techniques. The Sérsic index is a fundamental parameter describing how light is distributed in galaxies and reveals information about their bulge-disc structure, formation, and evolution.
 
-- **Cluster size**: 70 stars  
-- **Cluster setup**: Fractal method by Goodwin & Whitworth (2004)  
-- **Mass sampling**: Chabrier IMF  
-- **Integrator**: 4th Order Hermite with global time-step  
-- **Virial Ratios**: 0.5, 1.0, 1.5, 2.0  
-- **Outputs**: Stellar positions, velocities, mass segregation index (Λ<sub>MSR</sub>), binary count evolution, and clustering metrics.
+
+
+## 🧪 Scientific Objective
+
+- Estimate the Sérsic index for each galaxy using observational data.
+- Use both single and double Sérsic profile fitting (bulge + disc components).
+- Compare the extracted indices with theoretical models to deduce galactic structure.
+- Classify galaxies based on the light concentration and morphological type.
+
+## Target Galaxies
+| Galaxy       | Type             | Single Sersic  | Bulge n      | Disc n       |
+|--------------|------------------|----------------|--------------|--------------|
+| NGC3982      | Spiral           | 0.8            | 2.1          | 0.2          | 
+| NGC2865      | Elliptical       | 2.4            | 3.1          | 0.3          |
+| NGC7773      | Barred Spiral    | 1.9            | 2.3          | 0.2          |
+
+
 
 ## 📂 Repository Structure
 
 ```bash
-Nbody/
-├── src/                  # Source code in Fortran
-├── data/                 # Input mass samples and initial condition files
-├── output/               # Simulation snapshots and logs
-├── scripts/              # Python analysis tools
-├── Makefile              # Build script
-├── README.md             # Project documentation
-└── Masters_thesis.pdf    # Project report and full methodology
+Galaxy_Sersic_Project/
+├── data/                    # FITS images from LCO
+├── notebooks/
+│   ├── NGC3982.ipynb        # Sérsic profile fitting and visualization
+├── results/                 # Plots of brightness profiles and fits
+├── paper/                   # Project report (PDF)
+├── README.md                # Project documentation
 ```
 
-## 🧪 Methodology
 
-### Initial Cluster Generation
-- Built using a **fractal sub-structured distribution** to model clumpy star-forming regions.
-- Masses drawn from **Chabrier Initial Mass Function (IMF)**.
-- Initial velocities adjusted to center-of-mass frame and scaled to achieve desired virial ratios.
+## ⚙️ Methodology
 
-### N-Body Integration
-- **Hermite 4th Order P(EC)n scheme** with global time stepping.
-- Predict-correct scheme includes calculation of acceleration and its time derivative.
-- Code simulates purely gravitational interactions (no gas or dissipative forces).
+### 1. Data Acquisition
 
-### Simulation Parameters
-| Virial Ratio | Total Mass (M☉) | Evolution Time (Myr) |
-|--------------|------------------|-----------------------|
-| 0.5          | 24.15            | 88.0                  |
-| 1.0          | 24.02            | 125.4                 |
-| 1.5          | 24.44            | 152.5                 |
-| 2.0          | 23.93            | 177.6                 |
+- FITS files obtained via LCO telescope observations.
+- Targeted face-on galaxies to simplify profile extraction.
 
-## 📊 Key Results
 
-- **Mass Segregation**:  
-  - Quantified using Λ<sub>MSR</sub> via the minimum spanning tree method.
-  - Clusters with lower virial ratios exhibit earlier and stronger mass segregation.
+### 2. Aperture Photometry
 
-- **Binary Formation**:  
-  - Identified using binding energy criterion.
-  - Dynamically cold clusters form binaries early but disrupt them quickly.
-  - High virial ratio clusters form fewer, but more **long-lived and stable binaries**.
+- Used `photutils` to place concentric elliptical apertures.
+- Measured flux as a function of radius to build radial surface brightness profiles.
 
-- **Clustering Evolution**:  
-  - Studied using INDICATE index (nearest-neighbour-based clustering metric).
-  - High virial ratio clusters show slower spatial evolution and delayed sub-cluster formation.
 
-## 📦 Requirements
+### 3. Sersic Profile Fitting 
 
-### Fortran Compilation
-- `gfortran` (tested with version 13.2.0)
-- `make`
+- Single sersic via `astropy.modeling.models.Sersic1D`
+- Double Sersic model for
+- - `bulge` (n_bulge > 2)
+  - `Disc` (n_disc ~ 1)
 
-### Python Dependencies (for analysis)
-- `numpy`
-- `scipy`
-- `matplotlib`
-- `pandas`
-- `plotly` *(optional for 3D visualization)*
+### 4. Curve Fitting
 
-Install using:
+- Fitting done using `scipy.optimize.curve_fit`.
+- Data transformed to log scale to linearize intensity fall-off.
 
-```bash
-pip install numpy scipy matplotlib pandas plotly
-```
 
-## ⚙️ How to Run
-
-### Compile the Code
-```bash
-cd src/
-make
-```
-
-### Run a Simulation
-Make sure your input files (`ics.dat`, `mass_sample6.dat`) are in the working directory. Then:
-```bash
-./nbd
-```
-
-### Analyze with Python Scripts
-After the simulation:
-```bash
-cd scripts/
-python analyze_mass_segregation.py
-python analyze_binaries.py
-```
-
-## 🔍 Analysis & Visualization Tools
-
-Your post-processing pipeline in Python builds upon the N-body simulation data to extract physical insights and visualize the cluster’s evolution.
-
-### 🧠 Data Reader – `nbd_utils_code.py`
-A utility module for parsing binary snapshot files generated by the Fortran simulation.
-
-- `nbd_read(filename)`: Reads N-body binary files into a structured Python object.
-- `nbd_read_ascii()`: Reads binary parameters (binding energy, periastron, eccentricity) from ASCII outputs like `binary_parameters.dat`.
-
-### 📈 3D Cluster Evolution – `visualize_nbd.py`
-- Iterates through cluster snapshots.
-- Plots the 3D positions of stars at each timestep using `matplotlib`.
-- Useful for tracking **overall morphology** and **evolution over time**.
-
-### 🎞️ Animation – `ani.ipynb`
-- Creates a **dynamic animation** of the cluster’s time evolution.
-- Uses snapshot data to generate a time-sequence visualization.
-- Helps in **visual storytelling** of structural changes in the cluster.
-
-### 🔄 Binary System Tracking – `binary_formation.ipynb`
-- Loads data from `binary_parameters.dat`.
-- Plots the **cumulative number of binaries formed** over time.
-- Reveals how virial ratio influences **binary formation rates and stability**.
-
-### 🌌 Core Radius Analysis – `cluster_core.ipynb`
-- Computes the **core radius** of the cluster over time.
-- Helps track **dynamical contraction**, central concentration, or core bounce phenomena.
-
-### 📍 Spatial Distribution – `spatial_dist.ipynb`
-- Visualizes the **star density** and spatial distribution at various timesteps.
-- Identifies sub-structuring and clustering using 2D or 3D density projections.
 
 ## 📚 References
 
-Key works referenced in the implementation:
+- Astropy Documentation
+- Photutils Aperture Photometry
+- Fisher & Dory (2008, 2010) - Classical vs Psedobulges
+- Gadottu (2009) - Elliptical and pseudo-bulge structures
 
-- Goodwin & Whitworth (2004) – Fractal cluster generation
-- Chabrier (2003) – Initial Mass Function
-- Makino & Aarseth (1992) – Hermite Integrator
-- Allison et al. (2009) – Λ<sub>MSR</sub> for Mass Segregation
-- Heggie (1975) – Binary evolution in N-body systems
 
 ## 🙏 Acknowledgements
 
-This work was conducted at the **School of Physics and Astronomy, Cardiff University**. The initial codebase for the N-body integration was adapted from routines provided by **Dr. Paul Clark**. Additional project input was provided by **Adon Varghese**.
+This project was carried out at the **School of Physics and Astronomy, Cardiff University**, under the guidance of **Dr. Matthew Smith**. Observational data was obtained from the **Las Cumbres Observatory**.
 
-> *Note: My supervisor did not respond to recent inquiries, but their initial guidance during the project is acknowledged with gratitude.*
 
 ## 📜 License
 
