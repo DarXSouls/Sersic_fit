@@ -30,7 +30,7 @@ This project focuses on characterizing the morphology of three face-on galaxies�
 
 ```bash
 Galaxy_Sersic_Project/
-├── LCO data/                    # FITS images from LCO
+├── LCO data/                # FITS images from LCO
 ├── notebooks/
 │   ├── NGC3982.ipynb        # Sérsic profile fitting and visualization
 ├── results/                 # Plots of brightness profiles and fits
