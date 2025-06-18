@@ -89,5 +89,5 @@ This project is licensed under the **MIT License**. You are free to use, modify,
 For questions or collaborations:
 
 **Shyam Chinta**  
-Email: [Add your email]  
+Email: [shyamgirishchinta@gmail.com]  
 GitHub: [@DarXSouls](https://github.com/DarXSouls)
